@@ -61,6 +61,7 @@ body {
     color: white;
     background: #1e293b;
     font-size: 14px;
+    cursor: pointer;
 }
 
 .toolbar button.active {
@@ -82,7 +83,7 @@ body {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* ENTRY BLOCK (B K L vertical) */
+/* ENTRY */
 .entry {
     border: 1px solid #e5e7eb;
     padding: 10px;
@@ -128,6 +129,7 @@ body {
     border: none;
     border-radius: 8px;
     font-size: 15px;
+    cursor: pointer;
 }
 
 .add-btn {
@@ -202,80 +204,110 @@ All rights reserved to Kumar Law Associates
 <script>
 let mode="add";
 
-function toLecha(b,k,l){ return b*100+k*20+l; }
+function toLecha(b,k,l){
+    return (b*100)+(k*20)+l;
+}
 
 function fromLecha(t){
- let b=Math.floor(t/100); t%=100;
- let k=Math.floor(t/20);
- let l=t%20;
- return {b,k,l};
+    let b=Math.floor(t/100); t%=100;
+    let k=Math.floor(t/20);
+    let l=t%20;
+    return {b,k,l};
+}
+
+function normalize(entry){
+    let b=+entry.querySelector(".b").value||0;
+    let k=+entry.querySelector(".k").value||0;
+    let l=+entry.querySelector(".l").value||0;
+
+    if(l>=20){
+        k += Math.floor(l/20);
+        l = l % 20;
+    }
+
+    if(k>=5){
+        b += Math.floor(k/5);
+        k = k % 5;
+    }
+
+    entry.querySelector(".b").value=b;
+    entry.querySelector(".k").value=k;
+    entry.querySelector(".l").value=l;
 }
 
 function updateTotal(){
- let total=0;
+    let total=0;
 
- document.querySelectorAll(".entry").forEach(e=>{
-  let val=toLecha(
-   +e.querySelector(".b").value||0,
-   +e.querySelector(".k").value||0,
-   +e.querySelector(".l").value||0
-  );
-  total+=(mode==="add")?val:-val;
- });
+    document.querySelectorAll(".entry").forEach(e=>{
+        normalize(e);
 
- let res=document.getElementById("result");
+        let val=toLecha(
+            +e.querySelector(".b").value||0,
+            +e.querySelector(".k").value||0,
+            +e.querySelector(".l").value||0
+        );
 
- if(total<0){ res.innerText="Invalid"; return; }
+        total += (mode==="add") ? val : -val;
+    });
 
- let r=fromLecha(total);
- res.innerText=`Total: ${r.b} B | ${r.k} K | ${r.l} L`;
+    let res=document.getElementById("result");
+
+    if(total<0){
+        res.innerText="Invalid";
+        return;
+    }
+
+    let r=fromLecha(total);
+    res.innerText=`Total: ${r.b} B | ${r.k} K | ${r.l} L`;
 }
 
 function addRow(){
- let div=document.createElement("div");
- div.className="entry";
+    let div=document.createElement("div");
+    div.className="entry";
 
- div.innerHTML=`
- <button class="delete">×</button>
+    div.innerHTML=`
+    <button class="delete">×</button>
 
- <label>Bigha (B)</label>
- <input type="number" class="b">
+    <label>Bigha (B)</label>
+    <input type="number" class="b" value="0">
 
- <label>Katha (K)</label>
- <input type="number" class="k">
+    <label>Katha (K)</label>
+    <input type="number" class="k" value="0">
 
- <label>Lecha (L)</label>
- <input type="number" class="l">
- `;
+    <label>Lecha (L)</label>
+    <input type="number" class="l" value="0">
+    `;
 
- div.querySelectorAll("input").forEach(i=>{
-  i.oninput=updateTotal;
- });
+    div.querySelectorAll("input").forEach(i=>{
+        i.addEventListener("input", updateTotal);
+    });
 
- div.querySelector(".delete").onclick=()=>{
-  div.remove();
-  updateTotal();
- };
+    div.querySelector(".delete").onclick=()=>{
+        div.remove();
+        updateTotal();
+    };
 
- document.getElementById("rows").appendChild(div);
+    document.getElementById("rows").appendChild(div);
 }
 
 function clearRows(){
- document.getElementById("rows").innerHTML="";
- addRow();
- updateTotal();
+    document.getElementById("rows").innerHTML="";
+    addRow();
+    updateTotal();
 }
 
 function switchMode(m,el){
- mode=m;
+    mode=m;
 
- document.querySelectorAll(".toolbar button").forEach(b=>b.classList.remove("active"));
- el.classList.add("active");
+    document.querySelectorAll(".toolbar button")
+        .forEach(b=>b.classList.remove("active"));
 
- document.getElementById("modeTitle").innerText =
-  (m==="add") ? "Add Land" : "Subtract Land";
+    el.classList.add("active");
 
- clearRows();
+    document.getElementById("modeTitle").innerText =
+        (m==="add") ? "Add Land" : "Subtract Land";
+
+    clearRows();
 }
 
 addRow();
