@@ -246,34 +246,43 @@ function fromLecha(t){
     return {b,k,l};
 }
 
-/* TOTAL CALCULATION */
+/* TOTAL CALCULATION WITH FIRST ROW AS BASE */
 function updateTotal(){
-    let total = 0;
+    let rows = document.querySelectorAll(".entry");
+    if(rows.length === 0){
+        document.getElementById("result").innerHTML = "Total: 0 B | 0 K | 0 L<br>0 Sq Ft";
+        return;
+    }
 
-    document.querySelectorAll(".entry").forEach(e => {
+    // Take first row as base
+    let b0 = +rows[0].querySelector(".b").value || 0;
+    let k0 = +rows[0].querySelector(".k").value || 0;
+    let l0 = +rows[0].querySelector(".l").value || 0;
 
-        let b = +e.querySelector(".b").value || 0;
-        let k = +e.querySelector(".k").value || 0;
-        let l = +e.querySelector(".l").value || 0;
+    let total = toLecha(b0, k0, l0);
+
+    // Loop remaining rows
+    for(let i = 1; i < rows.length; i++){
+        let b = +rows[i].querySelector(".b").value || 0;
+        let k = +rows[i].querySelector(".k").value || 0;
+        let l = +rows[i].querySelector(".l").value || 0;
 
         let val = toLecha(b,k,l);
 
-        total += (mode === "add") ? val : -val;
-    });
+        if(mode === "sub") total -= val;
+        else total += val;
+    }
 
-    let res = document.getElementById("result");
-
+    // Prevent negative
     if(total < 0){
-        res.innerHTML = "Invalid";
+        document.getElementById("result").innerHTML = "Invalid (Subtraction exceeds base)";
         return;
     }
 
     let r = fromLecha(total);
-
-    // ✅ Square Feet (1 L = 144 sq ft)
     let sqft = total * 144;
 
-    res.innerHTML = `
+    document.getElementById("result").innerHTML = `
         Total: ${r.b} B | ${r.k} K | ${r.l} L<br>
         ${sqft.toLocaleString()} Sq Ft
     `;
@@ -282,7 +291,6 @@ function updateTotal(){
 /* LABEL ROW (ONLY ONCE) */
 function ensureLabels(){
     let rows = document.getElementById("rows");
-
     if(rows.querySelector(".label-row")) return;
 
     let label = document.createElement("div");
@@ -300,7 +308,6 @@ function ensureLabels(){
 
 /* ADD ROW */
 function addRow(){
-
     ensureLabels();
 
     let div = document.createElement("div");
