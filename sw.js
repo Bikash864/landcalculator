@@ -3,7 +3,8 @@ const CACHE_NAME = "land-app-v1";
 const urlsToCache = [
   "./",
   "./index.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./images/photo.jpg"
 ];
 
 self.addEventListener("install", event => {
