@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <title>Kumar Law Associates | Land Calculator</title>
 
-<!-- ✅ PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 
@@ -15,6 +14,7 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: #f1f5f9;
+    overflow-x: hidden;
 }
 
 /* HEADER */
@@ -26,6 +26,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .brand {
@@ -49,6 +50,7 @@ body {
     height: 36px;
     border-radius: 50%;
     border: 2px solid #22c55e;
+    object-fit: cover;
 }
 
 /* TOOLBAR */
@@ -79,12 +81,13 @@ body {
 
 /* CARD */
 .card {
+    width: min(420px, 100%);
+    margin: 10px auto;
     background: white;
     padding: 15px;
     border-radius: 12px;
-    max-width: 420px;
-    margin: auto;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
 }
 
 /* ENTRY */
@@ -100,6 +103,7 @@ input {
     border-radius: 6px;
     border: 1px solid #ccc;
     text-align: center;
+    box-sizing: border-box;
 }
 
 /* DELETE */
@@ -146,6 +150,32 @@ input {
     color: #64748b;
     margin: 20px 0;
 }
+
+/* MOBILE FIX */
+@media (max-width: 480px) {
+    .header {
+        padding: 10px;
+    }
+
+    .toolbar button {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .card {
+        margin: 10px;
+        width: auto;
+    }
+
+    input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .result {
+        font-size: 18px;
+    }
+}
 </style>
 </head>
 
@@ -191,81 +221,82 @@ All rights reserved to Kumar Law Associates
 </div>
 
 <script>
-let mode="add";
+let mode = "add";
 
 function toLecha(b,k,l){
-    return (b*100)+(k*20)+l;
+    return (b*100) + (k*20) + l;
 }
 
 function fromLecha(t){
-    let b=Math.floor(t/100); t%=100;
-    let k=Math.floor(t/20);
-    let l=t%20;
+    let b = Math.floor(t/100);
+    t %= 100;
+    let k = Math.floor(t/20);
+    let l = t % 20;
     return {b,k,l};
 }
 
 function normalize(entry){
-    let b=+entry.querySelector(".b").value||0;
-    let k=+entry.querySelector(".k").value||0;
-    let l=+entry.querySelector(".l").value||0;
+    let b = +entry.querySelector(".b").value || 0;
+    let k = +entry.querySelector(".k").value || 0;
+    let l = +entry.querySelector(".l").value || 0;
 
-    if(l>=20){
+    if(l >= 20){
         k += Math.floor(l/20);
         l = l % 20;
     }
 
-    if(k>=5){
+    if(k >= 5){
         b += Math.floor(k/5);
         k = k % 5;
     }
 
-    entry.querySelector(".b").value=b;
-    entry.querySelector(".k").value=k;
-    entry.querySelector(".l").value=l;
+    entry.querySelector(".b").value = b;
+    entry.querySelector(".k").value = k;
+    entry.querySelector(".l").value = l;
 }
 
 function updateTotal(){
-    let total=0;
+    let total = 0;
 
-    document.querySelectorAll(".entry").forEach(e=>{
+    document.querySelectorAll(".entry").forEach(e => {
         normalize(e);
 
-        let val=toLecha(
-            +e.querySelector(".b").value||0,
-            +e.querySelector(".k").value||0,
-            +e.querySelector(".l").value||0
+        let val = toLecha(
+            +e.querySelector(".b").value || 0,
+            +e.querySelector(".k").value || 0,
+            +e.querySelector(".l").value || 0
         );
 
-        total += (mode==="add") ? val : -val;
+        total += (mode === "add") ? val : -val;
     });
 
-    let res=document.getElementById("result");
+    let res = document.getElementById("result");
 
-    if(total<0){
-        res.innerText="Invalid";
+    if(total < 0){
+        res.innerText = "Invalid";
         return;
     }
 
-    let r=fromLecha(total);
-    res.innerText=`Total: ${r.b} B | ${r.k} K | ${r.l} L`;
+    let r = fromLecha(total);
+    res.innerText = `Total: ${r.b} B | ${r.k} K | ${r.l} L`;
 }
 
 function addRow(){
-    let div=document.createElement("div");
-    div.className="entry";
+    let div = document.createElement("div");
+    div.className = "entry";
 
-    div.innerHTML=`
-    <input type="number" class="b" placeholder="B" value="0">
-    <input type="number" class="k" placeholder="K" value="0">
-    <input type="number" class="l" placeholder="L" value="0">
-    <button class="delete">×</button>
+    div.innerHTML = `
+        <input type="number" class="b" placeholder="B" value="0">
+        <input type="number" class="k" placeholder="K" value="0">
+        <input type="number" class="l" placeholder="L" value="0">
+        <button class="delete">×</button>
     `;
 
     div.querySelectorAll("input").forEach(i=>{
         i.addEventListener("input", updateTotal);
     });
 
-    div.querySelector(".delete").onclick=()=>{
+    div.querySelector(".delete").onclick = () => {
         div.remove();
         updateTotal();
     };
@@ -274,28 +305,28 @@ function addRow(){
 }
 
 function clearRows(){
-    document.getElementById("rows").innerHTML="";
+    document.getElementById("rows").innerHTML = "";
     addRow();
     updateTotal();
 }
 
-function switchMode(m,el){
-    mode=m;
+function switchMode(m, el){
+    mode = m;
 
     document.querySelectorAll(".toolbar button")
-        .forEach(b=>b.classList.remove("active"));
+        .forEach(b => b.classList.remove("active"));
 
     el.classList.add("active");
 
     document.getElementById("modeTitle").innerText =
-        (m==="add") ? "Add Land" : "Subtract Land";
+        (m === "add") ? "Add Land" : "Subtract Land";
 
     clearRows();
 }
 
 addRow();
 
-/* ✅ SERVICE WORKER REGISTRATION */
+/* PWA */
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
     .then(() => console.log("Service Worker Registered"))
