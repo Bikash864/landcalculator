@@ -1,4 +1,4 @@
-const CACHE_NAME = "landcalc-v1";
+const CACHE_NAME = "landcalc-v2";
 
 const urlsToCache = [
   "./",
