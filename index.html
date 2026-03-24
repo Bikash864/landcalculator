@@ -6,6 +6,10 @@
 
 <title>Kumar Law Associates | Land Calculator</title>
 
+<!-- ✅ PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+
 <style>
 body {
     margin: 0;
@@ -83,7 +87,7 @@ body {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* ROW (B K L INLINE) */
+/* ENTRY */
 .entry {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr auto;
@@ -290,6 +294,13 @@ function switchMode(m,el){
 }
 
 addRow();
+
+/* ✅ SERVICE WORKER REGISTRATION */
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.log(err));
+}
 </script>
 
 </body>
