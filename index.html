@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <title>Kumar Law Associates | Land Calculator</title>
 
@@ -14,6 +14,7 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: #f1f5f9;
+    overflow-x: hidden;
 }
 
 /* HEADER */
@@ -21,10 +22,11 @@ body {
     width: 100%;
     background: linear-gradient(135deg, #020617, #0f172a);
     color: white;
-    padding: 10px 12px;
+    padding: 12px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .brand {
@@ -34,8 +36,8 @@ body {
 }
 
 .logo {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 8px;
     background: linear-gradient(135deg,#22c55e,#3b82f6);
     display: flex;
@@ -44,25 +46,28 @@ body {
 }
 
 .profile img {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 2px solid #22c55e;
+    object-fit: cover;
 }
 
 /* TOOLBAR */
 .toolbar {
     display: flex;
     width: 100%;
+    background: #020617;
 }
 
 .toolbar button {
     flex: 1;
-    padding: 10px;
+    padding: 12px;
     border: none;
     color: white;
     background: #1e293b;
-    font-size: 13px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .toolbar button.active {
@@ -71,88 +76,141 @@ body {
 
 /* CONTENT */
 .content {
-    padding: 10px;
+    padding: 15px;
 }
 
 /* CARD */
 .card {
+    width: min(420px, 100%);
+    margin: 10px auto;
     background: white;
-    padding: 12px;
-    border-radius: 10px;
-    max-width: 100%;
-    margin: auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
 }
 
-/* ENTRY */
+/* ENTRY (FIXED GRID) */
 .entry {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 40px;
-    gap: 6px;
+    gap: 8px;
     margin-bottom: 10px;
-}
-
-/* FIELD */
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-label {
-    font-size: 11px;
-    color: #555;
-    text-align: center;
+    align-items: center;
 }
 
 input {
-    padding: 8px;
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
     text-align: center;
     font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* DELETE */
+.delete {
+    width: 40px;
+    height: 38px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 /* BUTTONS */
 .btn {
     width: 100%;
-    padding: 10px;
-    margin-top: 8px;
+    padding: 12px;
+    margin-top: 10px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-size: 15px;
 }
 
-.add-btn { background: #22c55e; color: white; }
-.clear-btn { background: #ef4444; color: white; }
+.add-btn {
+    background: #22c55e;
+    color: white;
+}
+
+.clear-btn {
+    background: #ef4444;
+    color: white;
+}
 
 /* RESULT */
 .result {
     text-align: center;
-    margin-top: 12px;
-    font-size: 18px;
+    margin-top: 15px;
+    font-size: 20px;
     font-weight: bold;
-    line-height: 1.5;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    font-size: 13px;
+    color: #64748b;
+    margin: 20px 0;
+}
+
+/* MOBILE FIX (IMPORTANT PART) */
+@media (max-width: 480px) {
+
+    .header {
+        padding: 10px;
+    }
+
+    .toolbar button {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .card {
+        margin: 10px;
+        width: auto;
+    }
+
+    input {
+        padding: 8px 5px;
+        font-size: 13px;
+    }
+
+    .result {
+        font-size: 18px;
+    }
+
+    .entry {
+        grid-template-columns: 1fr 1fr 1fr 40px;
+        gap: 6px;
+    }
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
     <div class="brand">
         <div class="logo">⚖️</div>
-        <h3 style="font-size:14px;">Kumar Law Associates</h3>
+        <h3>Kumar Law Associates</h3>
     </div>
     <div class="profile">
         <img src="./images/photo.jpg" onerror="this.src='https://i.pravatar.cc/150'">
     </div>
 </div>
 
+<!-- TOOLBAR -->
 <div class="toolbar">
     <button class="active" onclick="switchMode('add', this)">Add Land</button>
     <button onclick="switchMode('sub', this)">Subtract Land</button>
 </div>
 
+<!-- CONTENT -->
 <div class="content">
 
 <div class="card">
@@ -162,114 +220,107 @@ input {
 <div id="rows"></div>
 
 <button class="btn add-btn" onclick="addRow()">Add Data</button>
-<button class="btn clear-btn" onclick="clearRows()">Clear</button>
+<button class="btn clear-btn" onclick="clearRows()">Clear Data</button>
 
 </div>
 
-<div class="result" id="result">0 B | 0 K | 0 L<br>0 Sq Ft</div>
+<div class="result" id="result">Total: 0 B | 0 K | 0 L</div>
 
+</div>
+
+<div class="footer">
+All rights reserved to Kumar Law Associates
 </div>
 
 <script>
-
 let mode = "add";
 
-/* =========================
-   CORRECT BASE SYSTEM
-   1 B = 100 L
-   1 K = 20 L
-   ========================= */
-
 function toLecha(b,k,l){
-    return (b * 100) + (k * 20) + l;
+    return (b*100) + (k*20) + l;
 }
 
-function fromLecha(total){
-    let b = Math.floor(total / 100);
-    total %= 100;
-    let k = Math.floor(total / 20);
-    let l = total % 20;
+function fromLecha(t){
+    let b = Math.floor(t/100);
+    t %= 100;
+    let k = Math.floor(t/20);
+    let l = t % 20;
     return {b,k,l};
 }
 
-/* =========================
-   FIXED SUBTRACTION LOGIC
-   (BORROW SAFE SYSTEM)
-   ========================= */
+function normalize(entry){
+    let b = +entry.querySelector(".b").value || 0;
+    let k = +entry.querySelector(".k").value || 0;
+    let l = +entry.querySelector(".l").value || 0;
+
+    if(l >= 20){
+        k += Math.floor(l/20);
+        l = l % 20;
+    }
+
+    if(k >= 5){
+        b += Math.floor(k/5);
+        k = k % 5;
+    }
+
+    entry.querySelector(".b").value = b;
+    entry.querySelector(".k").value = k;
+    entry.querySelector(".l").value = l;
+}
 
 function updateTotal(){
     let total = 0;
 
     document.querySelectorAll(".entry").forEach(e => {
+        normalize(e);
 
-        let b = +e.querySelector(".b").value || 0;
-        let k = +e.querySelector(".k").value || 0;
-        let l = +e.querySelector(".l").value || 0;
-
-        let val = toLecha(b,k,l);
+        let val = toLecha(
+            +e.querySelector(".b").value || 0,
+            +e.querySelector(".k").value || 0,
+            +e.querySelector(".l").value || 0
+        );
 
         total += (mode === "add") ? val : -val;
     });
 
     let res = document.getElementById("result");
 
-    /* normalize negative properly */
-    let sign = total < 0 ? -1 : 1;
-    total = Math.abs(total);
+    if(total < 0){
+        res.innerText = "Invalid";
+        return;
+    }
 
     let r = fromLecha(total);
-
-    let sqft = total * 144; // 1 lecha = 144 sq ft
-
-    res.innerHTML = `
-        ${sign < 0 ? "-" : ""}${r.b} B | ${r.k} K | ${r.l} L<br>
-        ${sqft.toLocaleString()} Sq Ft
-    `;
+    res.innerText = `Total: ${r.b} B | ${r.k} K | ${r.l} L`;
 }
-
-/* =========================
-   ROW MANAGEMENT
-   ========================= */
 
 function addRow(){
     let div = document.createElement("div");
     div.className = "entry";
 
     div.innerHTML = `
-        <div class="field">
-            <label>Bigha</label>
-            <input class="b" type="number" value="0">
-        </div>
-
-        <div class="field">
-            <label>Katha</label>
-            <input class="k" type="number" value="0">
-        </div>
-
-        <div class="field">
-            <label>Lessa</label>
-            <input class="l" type="number" value="0">
-        </div>
-
-        <button onclick="this.parentElement.remove(); updateTotal()">×</button>
+        <input type="number" class="b" placeholder="B" value="0">
+        <input type="number" class="k" placeholder="K" value="0">
+        <input type="number" class="l" placeholder="L" value="0">
+        <button class="delete">×</button>
     `;
 
     div.querySelectorAll("input").forEach(i=>{
         i.addEventListener("input", updateTotal);
     });
 
+    div.querySelector(".delete").onclick = () => {
+        div.remove();
+        updateTotal();
+    };
+
     document.getElementById("rows").appendChild(div);
-    updateTotal();
 }
 
 function clearRows(){
     document.getElementById("rows").innerHTML = "";
     addRow();
+    updateTotal();
 }
-
-/* =========================
-   MODE SWITCH
-   ========================= */
 
 function switchMode(m, el){
     mode = m;
@@ -285,19 +336,14 @@ function switchMode(m, el){
     clearRows();
 }
 
-/* init */
 addRow();
 
-/* =========================
-   PWA
-   ========================= */
-
+/* PWA */
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-    .then(()=>console.log("SW OK"))
-    .catch(()=>console.log("SW FAIL"));
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.log(err));
 }
-
 </script>
 
 </body>
