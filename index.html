@@ -90,7 +90,7 @@ body {
     box-sizing: border-box;
 }
 
-/* ENTRY (FIXED GRID) */
+/* ENTRY */
 .entry {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 40px;
@@ -157,9 +157,8 @@ input {
     margin: 20px 0;
 }
 
-/* MOBILE FIX (IMPORTANT PART) */
+/* MOBILE FIX */
 @media (max-width: 480px) {
-
     .header {
         padding: 10px;
     }
@@ -181,11 +180,6 @@ input {
 
     .result {
         font-size: 18px;
-    }
-
-    .entry {
-        grid-template-columns: 1fr 1fr 1fr 40px;
-        gap: 6px;
     }
 }
 </style>
@@ -235,30 +229,32 @@ All rights reserved to Kumar Law Associates
 <script>
 let mode = "add";
 
+/* CONVERT */
 function toLecha(b,k,l){
-    return (b*100) + (k*20) + l;
+    return (b * 100) + (k * 20) + l;
 }
 
 function fromLecha(t){
-    let b = Math.floor(t/100);
+    let b = Math.floor(t / 100);
     t %= 100;
-    let k = Math.floor(t/20);
+    let k = Math.floor(t / 20);
     let l = t % 20;
     return {b,k,l};
 }
 
+/* NORMALIZE INPUT */
 function normalize(entry){
     let b = +entry.querySelector(".b").value || 0;
     let k = +entry.querySelector(".k").value || 0;
     let l = +entry.querySelector(".l").value || 0;
 
     if(l >= 20){
-        k += Math.floor(l/20);
+        k += Math.floor(l / 20);
         l = l % 20;
     }
 
     if(k >= 5){
-        b += Math.floor(k/5);
+        b += Math.floor(k / 5);
         k = k % 5;
     }
 
@@ -267,8 +263,10 @@ function normalize(entry){
     entry.querySelector(".l").value = l;
 }
 
+/* FIXED CALCULATION */
 function updateTotal(){
-    let total = 0;
+    let totalAdd = 0;
+    let totalSub = 0;
 
     document.querySelectorAll(".entry").forEach(e => {
         normalize(e);
@@ -279,13 +277,19 @@ function updateTotal(){
             +e.querySelector(".l").value || 0
         );
 
-        total += (mode === "add") ? val : -val;
+        if(mode === "add"){
+            totalAdd += val;
+        } else {
+            totalSub += val;
+        }
     });
+
+    let total = totalAdd - totalSub;
 
     let res = document.getElementById("result");
 
     if(total < 0){
-        res.innerText = "Invalid";
+        res.innerText = "Invalid (negative land)";
         return;
     }
 
@@ -293,6 +297,7 @@ function updateTotal(){
     res.innerText = `Total: ${r.b} B | ${r.k} K | ${r.l} L`;
 }
 
+/* ROW HANDLING */
 function addRow(){
     let div = document.createElement("div");
     div.className = "entry";
@@ -336,6 +341,7 @@ function switchMode(m, el){
     clearRows();
 }
 
+/* INIT */
 addRow();
 
 /* PWA */
