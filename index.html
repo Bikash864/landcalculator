@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kumar Law Associates - Land Calculator</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f1f5f9;
+}
+
+/* HEADER */
+.header {
+    background: #0f172a;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* MAIN LAYOUT */
+.main {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    background: #020617;
+    color: white;
+    padding: 20px;
+}
+
+.menu-item {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: #1e293b;
+    text-align: center;
+}
+
+.menu-item.active {
+    background: #22c55e;
+}
+
+.menu-item:hover {
+    background: #334155;
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* TITLE */
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title h2 {
+    background: linear-gradient(90deg,#22c55e,#3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* ROW */
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 50px;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+/* BUTTONS */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.add-btn { background: #22c55e; color: white; }
+.clear-btn { background: #f59e0b; color: white; }
+.remove { background: red; color: white; }
+
+/* RESULT */
+.result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* DISCLAIMER */
+.footer {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+    .main {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+    }
+
+    .menu-item {
+        flex: 1;
+        margin: 5px;
+    }
+
+    .card {
+        max-width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div>Kumar Law Associates</div>
+    <div class="profile">
+        <img src="https://via.placeholder.com/100">
+    </div>
+</div>
+
+<div class="main">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="menu-item active" onclick="switchMode('add', this)">➕ Add Land</div>
+        <div class="menu-item" onclick="switchMode('sub', this)">➖ Subtract Land</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <div class="title">
+            <h2>LAND CALCULATOR</h2>
+        </div>
+
+        <div class="card">
+            <h3 id="modeTitle">Add Land</h3>
+            <div id="rows"></div>
+
+            <div class="btn-group">
+                <button class="add-btn" onclick="addRow()">+ Add Entry</button>
+                <button class="clear-btn" onclick="clearRows()">Clear</button>
+            </div>
+        </div>
+
+        <div class="result" id="result">
+            Total: 0 B | 0 K | 0 L
+        </div>
+
+    </div>
+
+</div>
+
+<!-- DISCLAIMER -->
+<div class="footer">
+    © All rights reserved to Kumar Law Associates
+</div>
+
+<script>
+
+let mode = "add";
+
+function toLecha(b,k,l){ return b*100 + k*20 + l; }
+
+function fromLecha(t){
+    let b=Math.floor(t/100); t%=100;
+    let k=Math.floor(t/20);
+    let l=t%20;
+    return {b,k,l};
+}
+
+function normalize(row){
+    let b=+row.querySelector(".b").value||0;
+    let k=+row.querySelector(".k").value||0;
+    let l=+row.querySelector(".l").value||0;
+
+    if(l>=20){ k+=Math.floor(l/20); l%=20; }
+    if(k>=5){ b+=Math.floor(k/5); k%=5; }
+
+    row.querySelector(".b").value=b;
+    row.querySelector(".k").value=k;
+    row.querySelector(".l").value=l;
+}
+
+function updateTotal(){
+    let total=0;
+
+    document.querySelectorAll(".row").forEach(r=>{
+        let val=toLecha(
+            +r.querySelector(".b").value||0,
+            +r.querySelector(".k").value||0,
+            +r.querySelector(".l").value||0
+        );
+
+        total += (mode==="add") ? val : -val;
+    });
+
+    let res=document.getElementById("result");
+
+    if(total<0){
+        res.innerText="Invalid";
+        return;
+    }
+
+    let r=fromLecha(total);
+    res.innerText=`Total: ${r.b} B | ${r.k} K | ${r.l} L`;
+}
+
+function addRow(){
+    let row=document.createElement("div");
+    row.className="row";
+
+    row.innerHTML=`
+        <input type="number" class="b" value="0">
+        <input type="number" class="k" value="0">
+        <input type="number" class="l" value="0">
+        <button class="remove">×</button>
+    `;
+
+    row.querySelectorAll("input").forEach(inp=>{
+        inp.addEventListener("input", ()=>{
+            normalize(row);
+            updateTotal();
+        });
+    });
+
+    row.querySelector(".remove").onclick=()=>{
+        row.remove();
+        updateTotal();
+    };
+
+    document.getElementById("rows").appendChild(row);
+}
+
+function clearRows(){
+    document.getElementById("rows").innerHTML="";
+    addRow();
+    updateTotal();
+}
+
+function switchMode(m, el){
+    mode = m;
+
+    document.getElementById("rows").innerHTML = "";
+
+    document.querySelectorAll(".menu-item").forEach(i=>i.classList.remove("active"));
+    el.classList.add("active");
+
+    document.getElementById("modeTitle").innerText = (m==="add") ? "Add Land" : "Subtract Land";
+
+    addRow();
+    updateTotal();
+}
+
+// init
+addRow();
+
+</script>
+
+</body>
+</html>
