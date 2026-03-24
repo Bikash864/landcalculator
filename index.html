@@ -161,6 +161,16 @@ input {
     line-height: 1.6;
 }
 
+.sqft-box {
+    margin-top: 8px;
+    background-color: #fde68a;
+    color: #000;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    font-weight: bold;
+}
+
 /* FOOTER */
 .footer {
     text-align: center;
@@ -221,7 +231,10 @@ input {
 
 </div>
 
-<div class="result" id="result">Total: 0 B | 0 K | 0 L<br>0 Sq Ft</div>
+<div class="result" id="result">
+    Total: 0 B | 0 K | 0 L
+    <div class="sqft-box" id="sqft">0 Sq Ft</div>
+</div>
 
 </div>
 
@@ -250,11 +263,14 @@ function fromLecha(t){
 function updateTotal(){
     let rows = document.querySelectorAll(".entry");
     if(rows.length === 0){
-        document.getElementById("result").innerHTML = "Total: 0 B | 0 K | 0 L<br>0 Sq Ft";
+        document.getElementById("result").innerHTML = `
+            Total: 0 B | 0 K | 0 L
+            <div class="sqft-box" id="sqft">0 Sq Ft</div>
+        `;
         return;
     }
 
-    // Take first row as base
+    // First row = base
     let b0 = +rows[0].querySelector(".b").value || 0;
     let k0 = +rows[0].querySelector(".k").value || 0;
     let l0 = +rows[0].querySelector(".l").value || 0;
@@ -273,9 +289,11 @@ function updateTotal(){
         else total += val;
     }
 
-    // Prevent negative
     if(total < 0){
-        document.getElementById("result").innerHTML = "Invalid (Subtraction exceeds base)";
+        document.getElementById("result").innerHTML = `
+            Invalid (Subtraction exceeds base)
+            <div class="sqft-box" id="sqft">0 Sq Ft</div>
+        `;
         return;
     }
 
@@ -283,12 +301,12 @@ function updateTotal(){
     let sqft = total * 144;
 
     document.getElementById("result").innerHTML = `
-        Total: ${r.b} B | ${r.k} K | ${r.l} L<br>
-        ${sqft.toLocaleString()} Sq Ft
+        Total: ${r.b} B | ${r.k} K | ${r.l} L
+        <div class="sqft-box" id="sqft">${sqft.toLocaleString()} Sq Ft</div>
     `;
 }
 
-/* LABEL ROW (ONLY ONCE) */
+/* LABEL ROW */
 function ensureLabels(){
     let rows = document.getElementById("rows");
     if(rows.querySelector(".label-row")) return;
@@ -314,9 +332,9 @@ function addRow(){
     div.className = "entry";
 
     div.innerHTML = `
-        <input type="number" class="b" value="0">
-        <input type="number" class="k" value="0">
-        <input type="number" class="l" value="0">
+        <input type="number" class="b" placeholder="">
+        <input type="number" class="k" placeholder="">
+        <input type="number" class="l" placeholder="">
         <button class="delete">×</button>
     `;
 
