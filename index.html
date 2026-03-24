@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Kumar Law Associates | Land Calculator</title>
 
@@ -21,7 +21,7 @@ body {
     width: 100%;
     background: linear-gradient(135deg, #020617, #0f172a);
     color: white;
-    padding: 12px 15px;
+    padding: 10px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -34,8 +34,8 @@ body {
 }
 
 .logo {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
     background: linear-gradient(135deg,#22c55e,#3b82f6);
     display: flex;
@@ -44,8 +44,8 @@ body {
 }
 
 .profile img {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: 2px solid #22c55e;
 }
@@ -54,17 +54,15 @@ body {
 .toolbar {
     display: flex;
     width: 100%;
-    background: #020617;
 }
 
 .toolbar button {
     flex: 1;
-    padding: 12px;
+    padding: 10px;
     border: none;
     color: white;
     background: #1e293b;
-    font-size: 14px;
-    cursor: pointer;
+    font-size: 13px;
 }
 
 .toolbar button.active {
@@ -73,90 +71,67 @@ body {
 
 /* CONTENT */
 .content {
-    padding: 15px;
+    padding: 10px;
 }
 
 /* CARD */
 .card {
     background: white;
-    padding: 15px;
-    border-radius: 12px;
-    max-width: 420px;
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 100%;
     margin: auto;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* ENTRY */
 .entry {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    gap: 8px;
+    grid-template-columns: 1fr 1fr 1fr 40px;
+    gap: 6px;
     margin-bottom: 10px;
 }
 
-/* LABEL + INPUT FIX */
+/* FIELD */
 .field {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
 }
 
 label {
     font-size: 11px;
-    color: #666;
+    color: #555;
     text-align: center;
 }
 
 input {
-    padding: 10px;
+    padding: 8px;
     border-radius: 6px;
     border: 1px solid #ccc;
     text-align: center;
-}
-
-/* DELETE */
-.delete {
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    font-size: 14px;
 }
 
 /* BUTTONS */
 .btn {
     width: 100%;
-    padding: 12px;
-    margin-top: 10px;
+    padding: 10px;
+    margin-top: 8px;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 6px;
 }
 
-.add-btn {
-    background: #22c55e;
-    color: white;
-}
-
-.clear-btn {
-    background: #ef4444;
-    color: white;
-}
+.add-btn { background: #22c55e; color: white; }
+.clear-btn { background: #ef4444; color: white; }
 
 /* RESULT */
 .result {
     text-align: center;
-    margin-top: 15px;
-    font-size: 20px;
+    margin-top: 12px;
+    font-size: 18px;
     font-weight: bold;
-}
-
-/* FOOTER */
-.footer {
-    text-align: center;
-    font-size: 13px;
-    color: #64748b;
-    margin: 20px 0;
+    line-height: 1.5;
 }
 </style>
 </head>
@@ -166,7 +141,7 @@ input {
 <div class="header">
     <div class="brand">
         <div class="logo">⚖️</div>
-        <h3>Kumar Law Associates</h3>
+        <h3 style="font-size:14px;">Kumar Law Associates</h3>
     </div>
     <div class="profile">
         <img src="./images/photo.jpg" onerror="this.src='https://i.pravatar.cc/150'">
@@ -187,34 +162,40 @@ input {
 <div id="rows"></div>
 
 <button class="btn add-btn" onclick="addRow()">Add Data</button>
-<button class="btn clear-btn" onclick="clearRows()">Clear Data</button>
+<button class="btn clear-btn" onclick="clearRows()">Clear</button>
 
 </div>
 
-<div class="result" id="result">Total: 0 B | 0 K | 0 L</div>
+<div class="result" id="result">0 B | 0 K | 0 L<br>0 Sq Ft</div>
 
-</div>
-
-<div class="footer">
-All rights reserved to Kumar Law Associates
 </div>
 
 <script>
 
 let mode = "add";
 
-/* ✅ FINAL CORRECT SYSTEM */
+/* =========================
+   CORRECT BASE SYSTEM
+   1 B = 100 L
+   1 K = 20 L
+   ========================= */
+
 function toLecha(b,k,l){
     return (b * 100) + (k * 20) + l;
 }
 
-function fromLecha(t){
-    let b = Math.floor(t / 100);
-    t %= 100;
-    let k = Math.floor(t / 20);
-    let l = t % 20;
+function fromLecha(total){
+    let b = Math.floor(total / 100);
+    total %= 100;
+    let k = Math.floor(total / 20);
+    let l = total % 20;
     return {b,k,l};
 }
+
+/* =========================
+   FIXED SUBTRACTION LOGIC
+   (BORROW SAFE SYSTEM)
+   ========================= */
 
 function updateTotal(){
     let total = 0;
@@ -232,14 +213,23 @@ function updateTotal(){
 
     let res = document.getElementById("result");
 
-    if(total < 0){
-        res.innerText = "Invalid (negative land)";
-        return;
-    }
+    /* normalize negative properly */
+    let sign = total < 0 ? -1 : 1;
+    total = Math.abs(total);
 
     let r = fromLecha(total);
-    res.innerText = `Total: ${r.b} B | ${r.k} K | ${r.l} L`;
+
+    let sqft = total * 144; // 1 lecha = 144 sq ft
+
+    res.innerHTML = `
+        ${sign < 0 ? "-" : ""}${r.b} B | ${r.k} K | ${r.l} L<br>
+        ${sqft.toLocaleString()} Sq Ft
+    `;
 }
+
+/* =========================
+   ROW MANAGEMENT
+   ========================= */
 
 function addRow(){
     let div = document.createElement("div");
@@ -261,28 +251,27 @@ function addRow(){
             <input class="l" type="number" value="0">
         </div>
 
-        <button class="delete">×</button>
+        <button onclick="this.parentElement.remove(); updateTotal()">×</button>
     `;
 
     div.querySelectorAll("input").forEach(i=>{
         i.addEventListener("input", updateTotal);
     });
 
-    div.querySelector(".delete").onclick = () => {
-        div.remove();
-        updateTotal();
-    };
-
     document.getElementById("rows").appendChild(div);
+    updateTotal();
 }
 
 function clearRows(){
     document.getElementById("rows").innerHTML = "";
     addRow();
-    updateTotal();
 }
 
-function switchMode(m,el){
+/* =========================
+   MODE SWITCH
+   ========================= */
+
+function switchMode(m, el){
     mode = m;
 
     document.querySelectorAll(".toolbar button")
@@ -296,13 +285,17 @@ function switchMode(m,el){
     clearRows();
 }
 
+/* init */
 addRow();
 
-/* PWA */
+/* =========================
+   PWA
+   ========================= */
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-    .then(() => console.log("Service Worker Registered"))
-    .catch(err => console.log(err));
+    .then(()=>console.log("SW OK"))
+    .catch(()=>console.log("SW FAIL"));
 }
 
 </script>
