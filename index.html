@@ -147,6 +147,7 @@ input {
     margin-top: 15px;
     font-size: 20px;
     font-weight: bold;
+    line-height: 1.6;
 }
 
 /* FOOTER */
@@ -218,7 +219,7 @@ input {
 
 </div>
 
-<div class="result" id="result">Total: 0 B | 0 K | 0 L</div>
+<div class="result" id="result">Total: 0 B | 0 K | 0 L<br>≈ 0 Square Feet</div>
 
 </div>
 
@@ -263,10 +264,9 @@ function normalize(entry){
     entry.querySelector(".l").value = l;
 }
 
-/* FIXED CALCULATION */
+/* UPDATE TOTAL WITH SQUARE FEET */
 function updateTotal(){
-    let totalAdd = 0;
-    let totalSub = 0;
+    let total = 0;
 
     document.querySelectorAll(".entry").forEach(e => {
         normalize(e);
@@ -277,24 +277,26 @@ function updateTotal(){
             +e.querySelector(".l").value || 0
         );
 
-        if(mode === "add"){
-            totalAdd += val;
-        } else {
-            totalSub += val;
-        }
+        let sign = (mode === "add") ? 1 : -1;
+        total += val * sign;
     });
-
-    let total = totalAdd - totalSub;
 
     let res = document.getElementById("result");
 
     if(total < 0){
-        res.innerText = "Invalid (negative land)";
+        res.innerHTML = "Invalid (negative land)";
         return;
     }
 
     let r = fromLecha(total);
-    res.innerText = `Total: ${r.b} B | ${r.k} K | ${r.l} L`;
+
+    // 1 L = 144 sq ft (1 K = 2880 sq ft)
+    let sqft = total * 144;
+
+    res.innerHTML = `
+        Total: ${r.b} B | ${r.k} K | ${r.l} L<br>
+        <span style="font-size:16px; font-weight:500;">≈ ${sqft.toLocaleString()} Square Feet</span>
+    `;
 }
 
 /* ROW HANDLING */
