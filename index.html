@@ -78,46 +78,32 @@ body {
     background: white;
     padding: 15px;
     border-radius: 12px;
-    max-width: 400px;
+    max-width: 420px;
     margin: auto;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* ENTRY */
+/* ROW (B K L INLINE) */
 .entry {
-    border: 1px solid #e5e7eb;
-    padding: 10px;
-    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 8px;
     margin-bottom: 10px;
-    position: relative;
 }
 
-.entry label {
-    font-size: 12px;
-    color: #555;
-}
-
-.entry input {
-    width: 100%;
+input {
     padding: 10px;
-    margin-bottom: 8px;
     border-radius: 6px;
     border: 1px solid #ccc;
     text-align: center;
 }
 
-/* DELETE BUTTON */
+/* DELETE */
 .delete {
-    position: absolute;
-    top: 8px;
-    right: 8px;
     background: #ef4444;
     color: white;
     border: none;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
+    border-radius: 6px;
     cursor: pointer;
 }
 
@@ -129,7 +115,6 @@ body {
     border: none;
     border-radius: 8px;
     font-size: 15px;
-    cursor: pointer;
 }
 
 .add-btn {
@@ -266,16 +251,10 @@ function addRow(){
     div.className="entry";
 
     div.innerHTML=`
+    <input type="number" class="b" placeholder="B" value="0">
+    <input type="number" class="k" placeholder="K" value="0">
+    <input type="number" class="l" placeholder="L" value="0">
     <button class="delete">×</button>
-
-    <label>Bigha (B)</label>
-    <input type="number" class="b" value="0">
-
-    <label>Katha (K)</label>
-    <input type="number" class="k" value="0">
-
-    <label>Lecha (L)</label>
-    <input type="number" class="l" value="0">
     `;
 
     div.querySelectorAll("input").forEach(i=>{
