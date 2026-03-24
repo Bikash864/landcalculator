@@ -1,4 +1,4 @@
-const CACHE_NAME = "land-app-v1";
+const CACHE_NAME = "land-app-v2";
 
 const urlsToCache = [
   "./",
