@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Kumar Law Associates | Land Calculator</title>
 
@@ -14,7 +14,6 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: #f1f5f9;
-    overflow-x: hidden;
 }
 
 /* HEADER */
@@ -26,7 +25,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-sizing: border-box;
 }
 
 .brand {
@@ -50,7 +48,6 @@ body {
     height: 36px;
     border-radius: 50%;
     border: 2px solid #22c55e;
-    object-fit: cover;
 }
 
 /* TOOLBAR */
@@ -81,39 +78,44 @@ body {
 
 /* CARD */
 .card {
-    width: min(420px, 100%);
-    margin: 10px auto;
     background: white;
     padding: 15px;
     border-radius: 12px;
+    max-width: 420px;
+    margin: auto;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    box-sizing: border-box;
 }
 
 /* ENTRY */
 .entry {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 40px;
+    grid-template-columns: 1fr 1fr 1fr auto;
     gap: 8px;
     margin-bottom: 10px;
-    align-items: center;
+}
+
+/* LABEL + INPUT FIX */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+label {
+    font-size: 11px;
+    color: #666;
+    text-align: center;
 }
 
 input {
-    width: 100%;
-    min-width: 0;
     padding: 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
     text-align: center;
-    font-size: 14px;
-    box-sizing: border-box;
 }
 
 /* DELETE */
 .delete {
-    width: 40px;
-    height: 38px;
     background: #ef4444;
     color: white;
     border: none;
@@ -147,7 +149,6 @@ input {
     margin-top: 15px;
     font-size: 20px;
     font-weight: bold;
-    line-height: 1.6;
 }
 
 /* FOOTER */
@@ -157,38 +158,11 @@ input {
     color: #64748b;
     margin: 20px 0;
 }
-
-/* MOBILE FIX */
-@media (max-width: 480px) {
-    .header {
-        padding: 10px;
-    }
-
-    .toolbar button {
-        font-size: 12px;
-        padding: 10px;
-    }
-
-    .card {
-        margin: 10px;
-        width: auto;
-    }
-
-    input {
-        padding: 8px 5px;
-        font-size: 13px;
-    }
-
-    .result {
-        font-size: 18px;
-    }
-}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
     <div class="brand">
         <div class="logo">⚖️</div>
@@ -199,13 +173,11 @@ input {
     </div>
 </div>
 
-<!-- TOOLBAR -->
 <div class="toolbar">
     <button class="active" onclick="switchMode('add', this)">Add Land</button>
     <button onclick="switchMode('sub', this)">Subtract Land</button>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
 <div class="card">
@@ -219,7 +191,7 @@ input {
 
 </div>
 
-<div class="result" id="result">Total: 0 B | 0 K | 0 L<br>≈ 0 Square Feet</div>
+<div class="result" id="result">Total: 0 B | 0 K | 0 L</div>
 
 </div>
 
@@ -228,9 +200,10 @@ All rights reserved to Kumar Law Associates
 </div>
 
 <script>
+
 let mode = "add";
 
-/* CONVERT */
+/* ✅ FINAL CORRECT SYSTEM */
 function toLecha(b,k,l){
     return (b * 100) + (k * 20) + l;
 }
@@ -243,71 +216,51 @@ function fromLecha(t){
     return {b,k,l};
 }
 
-/* NORMALIZE INPUT */
-function normalize(entry){
-    let b = +entry.querySelector(".b").value || 0;
-    let k = +entry.querySelector(".k").value || 0;
-    let l = +entry.querySelector(".l").value || 0;
-
-    if(l >= 20){
-        k += Math.floor(l / 20);
-        l = l % 20;
-    }
-
-    if(k >= 5){
-        b += Math.floor(k / 5);
-        k = k % 5;
-    }
-
-    entry.querySelector(".b").value = b;
-    entry.querySelector(".k").value = k;
-    entry.querySelector(".l").value = l;
-}
-
-/* UPDATE TOTAL WITH SQUARE FEET */
 function updateTotal(){
     let total = 0;
 
     document.querySelectorAll(".entry").forEach(e => {
-        normalize(e);
 
-        let val = toLecha(
-            +e.querySelector(".b").value || 0,
-            +e.querySelector(".k").value || 0,
-            +e.querySelector(".l").value || 0
-        );
+        let b = +e.querySelector(".b").value || 0;
+        let k = +e.querySelector(".k").value || 0;
+        let l = +e.querySelector(".l").value || 0;
 
-        let sign = (mode === "add") ? 1 : -1;
-        total += val * sign;
+        let val = toLecha(b,k,l);
+
+        total += (mode === "add") ? val : -val;
     });
 
     let res = document.getElementById("result");
 
     if(total < 0){
-        res.innerHTML = "Invalid (negative land)";
+        res.innerText = "Invalid (negative land)";
         return;
     }
 
     let r = fromLecha(total);
-
-    // 1 L = 144 sq ft (1 K = 2880 sq ft)
-    let sqft = total * 144;
-
-    res.innerHTML = `
-        Total: ${r.b} B | ${r.k} K | ${r.l} L<br>
-        <span style="font-size:16px; font-weight:500;">≈ ${sqft.toLocaleString()} Square Feet</span>
-    `;
+    res.innerText = `Total: ${r.b} B | ${r.k} K | ${r.l} L`;
 }
 
-/* ROW HANDLING */
 function addRow(){
     let div = document.createElement("div");
     div.className = "entry";
 
     div.innerHTML = `
-        <input type="number" class="b" placeholder="B" value="0">
-        <input type="number" class="k" placeholder="K" value="0">
-        <input type="number" class="l" placeholder="L" value="0">
+        <div class="field">
+            <label>Bigha</label>
+            <input class="b" type="number" value="0">
+        </div>
+
+        <div class="field">
+            <label>Katha</label>
+            <input class="k" type="number" value="0">
+        </div>
+
+        <div class="field">
+            <label>Lessa</label>
+            <input class="l" type="number" value="0">
+        </div>
+
         <button class="delete">×</button>
     `;
 
@@ -329,7 +282,7 @@ function clearRows(){
     updateTotal();
 }
 
-function switchMode(m, el){
+function switchMode(m,el){
     mode = m;
 
     document.querySelectorAll(".toolbar button")
@@ -343,7 +296,6 @@ function switchMode(m, el){
     clearRows();
 }
 
-/* INIT */
 addRow();
 
 /* PWA */
@@ -352,6 +304,7 @@ if ('serviceWorker' in navigator) {
     .then(() => console.log("Service Worker Registered"))
     .catch(err => console.log(err));
 }
+
 </script>
 
 </body>
