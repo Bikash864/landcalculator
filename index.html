@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>Kumar Law Associates - Land Calculator</title>
 
+<!-- ✅ PWA MANIFEST -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+
 <style>
 body {
     margin: 0;
@@ -310,6 +314,14 @@ function switchMode(m, el){
 // init
 addRow();
 
+</script>
+
+<!-- ✅ SERVICE WORKER -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log("PWA Ready"));
+}
 </script>
 
 </body>
