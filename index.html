@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Kumar Law Associates - Land Calculator</title>
 
-<!-- ✅ PWA MANIFEST -->
+<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 
@@ -25,10 +25,20 @@ body {
     align-items: center;
 }
 
+/* PROFILE (UPDATED) */
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .profile img {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #22c55e;
+    box-shadow: 0 0 8px rgba(34,197,94,0.4);
 }
 
 /* MAIN LAYOUT */
@@ -172,8 +182,9 @@ button {
 <!-- HEADER -->
 <div class="header">
     <div>Kumar Law Associates</div>
+
     <div class="profile">
-        <img src="myphoto.jpg">
+        <img src="myphoto.jpg" alt="Profile">
     </div>
 </div>
 
@@ -316,7 +327,7 @@ addRow();
 
 </script>
 
-<!-- ✅ SERVICE WORKER -->
+<!-- SERVICE WORKER -->
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')
