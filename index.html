@@ -161,19 +161,26 @@ input {
     line-height: 1.6;
 }
 
+/* 🔥 FIXED: proper block spacing below Total */
 .sqft-box {
-    margin-top: 8px;
+    margin-top: 10px;
     background-color: #fde68a;
     color: #000;
-    padding: 6px 10px;
-    border-radius: 6px;
-    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
     font-weight: bold;
 }
 
 /* FOOTER */
 .footer {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
     font-size: 13px;
     color: #64748b;
     margin: 20px 0;
@@ -238,8 +245,9 @@ input {
 
 </div>
 
+<!-- 🔥 FIXED FOOTER -->
 <div class="footer">
-All rights reserved to Kumar Law Associates
+    © All rights reserved to Kumar Law Associates
 </div>
 
 <script>
@@ -259,25 +267,23 @@ function fromLecha(t){
     return {b,k,l};
 }
 
-/* TOTAL CALCULATION WITH FIRST ROW AS BASE */
+/* TOTAL CALCULATION */
 function updateTotal(){
     let rows = document.querySelectorAll(".entry");
     if(rows.length === 0){
         document.getElementById("result").innerHTML = `
             Total: 0 B | 0 K | 0 L
-            <div class="sqft-box" id="sqft">0 Sq Ft</div>
+            <div class="sqft-box">0 Sq Ft</div>
         `;
         return;
     }
 
-    // First row = base
     let b0 = +rows[0].querySelector(".b").value || 0;
     let k0 = +rows[0].querySelector(".k").value || 0;
     let l0 = +rows[0].querySelector(".l").value || 0;
 
     let total = toLecha(b0, k0, l0);
 
-    // Loop remaining rows
     for(let i = 1; i < rows.length; i++){
         let b = +rows[i].querySelector(".b").value || 0;
         let k = +rows[i].querySelector(".k").value || 0;
@@ -292,7 +298,7 @@ function updateTotal(){
     if(total < 0){
         document.getElementById("result").innerHTML = `
             Invalid (Subtraction exceeds base)
-            <div class="sqft-box" id="sqft">0 Sq Ft</div>
+            <div class="sqft-box">0 Sq Ft</div>
         `;
         return;
     }
@@ -302,11 +308,11 @@ function updateTotal(){
 
     document.getElementById("result").innerHTML = `
         Total: ${r.b} B | ${r.k} K | ${r.l} L
-        <div class="sqft-box" id="sqft">${sqft.toLocaleString()} Sq Ft</div>
+        <div class="sqft-box">${sqft.toLocaleString()} Sq Ft</div>
     `;
 }
 
-/* LABEL ROW */
+/* LABEL */
 function ensureLabels(){
     let rows = document.getElementById("rows");
     if(rows.querySelector(".label-row")) return;
@@ -358,7 +364,7 @@ function clearRows(){
     addRow();
 }
 
-/* MODE SWITCH */
+/* MODE */
 function switchMode(m, el){
     mode = m;
 
@@ -379,8 +385,7 @@ addRow();
 /* PWA */
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-    .then(()=>console.log("SW Registered"))
-    .catch(()=>console.log("SW Error"));
+    .catch(()=>{});
 }
 
 </script>
